@@ -1,0 +1,59 @@
+# Render.com Blueprint — one-click deploy of the full stack.
+# Docs: https://render.com/docs/blueprint-spec
+services:
+  - type: web
+    name: bidpilot-backend
+    runtime: python
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: bidpilot-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          name: bidpilot-redis
+          type: redis
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: AWS_ACCESS_KEY_ID
+        sync: false
+      - key: AWS_SECRET_ACCESS_KEY
+        sync: false
+      - key: QDRANT_URL
+        sync: false
+
+  - type: worker
+    name: bidpilot-worker
+    runtime: python
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: celery -A app.jobs.celery_config worker -Q high_priority,default,low_priority -l info
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: bidpilot-db
+          property: connectionString
+      - key: CELERY_BROKER_URL
+        fromService:
+          name: bidpilot-redis
+          type: redis
+          property: connectionString
+      - key: OPENAI_API_KEY
+        sync: false
+
+  - type: redis
+    name: bidpilot-redis
+    ipAllowList: []
+    plan: starter
+
+databases:
+  - name: bidpilot-db
+    plan: starter
+    databaseName: bidpilot
+    user: bidpilot

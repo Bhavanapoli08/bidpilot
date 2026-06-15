@@ -1,0 +1,26 @@
+# Environment
+.env
+.env.*
+
+# Python
+venv/
+__pycache__/
+*.pyc
+
+# Databases
+*.db
+*.sqlite
+*.sqlite3
+
+# Logs
+logs/
+
+# Local storage
+.local_storage/
+
+# Frontend
+frontend/node_modules/
+frontend/.next/
+
+# Mac
+.DS_Store
