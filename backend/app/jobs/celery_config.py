@@ -27,9 +27,14 @@ celery_app.conf.update(
 )
 
 if settings.CELERY_BROKER_URL.startswith("rediss://"):
-    celery_app.conf.broker_use_ssl = {"ssl_cert_reqs": ssl.CERT_REQUIRED}
+    celery_app.conf.broker_use_ssl = {
+        "ssl_cert_reqs": ssl.CERT_NONE
+    }
+
 if settings.CELERY_RESULT_BACKEND.startswith("rediss://"):
-    celery_app.conf.redis_backend_use_ssl = {"ssl_cert_reqs": ssl.CERT_REQUIRED}
+    celery_app.conf.redis_backend_use_ssl = {
+        "ssl_cert_reqs": ssl.CERT_NONE
+    }
 
 # Queue configuration
 celery_app.conf.task_queues = (

@@ -351,3 +351,5 @@ class TenderScorer:
 def score_tender(tender: Dict[str, Any], company: Dict[str, Any]) -> Dict[str, Any]:
     """Convenience wrapper."""
     return TenderScorer(tender, company).score()
+
+
